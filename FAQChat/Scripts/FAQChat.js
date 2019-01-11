@@ -1,13 +1,13 @@
 ﻿$(function () {
     $.getScript("http://localhost:59913/Scripts/jquery.signalR-2.2.2.min.js", function () {
         $.getScript("http://localhost:59913/signalr/hubs", function () {
-           /* $('<link>')
+            $('<link>')
                 .appendTo('head')
                 .attr({
                     type: 'text/css',
                     rel: 'stylesheet',
                     href: 'http://localhost:59913/chat_template.css'
-                });*/
+                });
             var divElem = $('<div/>')
                 .load('http://localhost:59913/chat_template.html', function () {
                     $.connection.hub.url = 'http://localhost:59913/signalr';
