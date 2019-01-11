@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
+using Microsoft.Owin.Cors;
 using Owin;
 
 [assembly: OwinStartup(typeof(FAQChat.Startup))]
@@ -12,9 +13,12 @@ namespace FAQChat
         {
             var hubConfiguration = new HubConfiguration();
             hubConfiguration.EnableDetailedErrors = true;
+            hubConfiguration.EnableJSONP = true;            
             hubConfiguration.EnableJavaScriptProxies = true;
 
-            app.MapSignalR("/signalr", hubConfiguration);
+            app.UseCors(CorsOptions.AllowAll);
+
+            app.MapSignalR(hubConfiguration);
         }
     }
 }
