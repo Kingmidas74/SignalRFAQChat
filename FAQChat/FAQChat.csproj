@@ -97,10 +97,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="chat_template.css" />
+    <Content Include="assets\chat_template.css" />
+    <Content Include="assets\chat_template.htm" />
     <Content Include="libman.json" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="chat_template.html" />
     <Content Include="Index.html" />
     <Content Include="Scripts\FAQChat.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
