@@ -2,7 +2,7 @@
     var $ = jQuery;
 
     var _systemObjects = {
-        SERVER_URL: 'http://localhost:59913/',
+        SERVER_URL: 'http://localhost:58825/',
         chat: {}
     };
 
@@ -43,6 +43,15 @@
         _elements.discussion.append('<li><strong>' + encodedName + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
     };
 
+    var _loadForm = function (html) {
+        $(html).appendTo('body');        
+        _memorizeElements();
+
+        _elements.displayname.text(prompt('Enter your name:', ''));
+        _elements.message.focus();
+        _elements.form.submit(_sendMessage);
+    };
+
 
 
 
@@ -56,15 +65,7 @@
         _systemObjects.chat = $.connection.baseHub;
         _systemObjects.chat.client.askQuestion = _recieveMessage;
         _systemObjects.chat.client.addAnswer = function (questionId, text) { };
-        _systemObjects.chat.client.sendForm = function (content) {
-            var divElem = $('<div />').html(content);
-            divElem.appendTo('body');
-            _memorizeElements();
-
-            _elements.displayname.text(prompt('Enter your name:', ''));
-            _elements.message.focus();
-            _elements.form.submit(_sendMessage);
-        };
+        _systemObjects.chat.client.sendForm = _loadForm;
 
         
         $.connection.hub.start().done(function () {
