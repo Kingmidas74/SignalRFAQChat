@@ -1,9 +1,13 @@
 ﻿var FAQChat = function (serverURI, userData) {
 
+    var _questions = [];
+    var _currentQuestion = null;
+
     var _systemObjects = {
         SERVER_URL: 'http://localhost:59915/',
         chat: {},
-        question_template: "<li class='faq-chat-question'><p class= 'faq-chat-question-text'>{{question}}</p><div class='faq-chat-question-answerscount' data-question-id='{{questionid}}'>{{answercount}}</div></li >"
+        question_template: "<li class='faq-chat-question' data-question-id='{{questionid}}'><p class= 'faq-chat-question-text'>{{question}}</p><div class='faq-chat-question-answerscount'>{{answercount}}</div></li >",
+        answer_template: "<li class='faq-chat-questionpanel-answer'><p class= 'faq-chat-questionpanel-answer-text' >{{answertext}}</p><div class='faq-chat-questionpanel-answer-scores' data-answer-id='{{answerid}}'><div class='faq-chat-questionpanel-answer-scoresincrease' class='faq-chat-button icon small'>↑</div><span>{{scores}}</span><div class='faq-chat-questionpanel-answer-scoresdecrease' class='faq-chat-button icon small'>↓</div></div></li >"
     };
 
     var _elements = {};
@@ -38,32 +42,101 @@
     };
 
     var _memorizeElements = function () {
-        _elements['form'] = $('#faq-chat-id--form');
-        _elements['displayname'] = $('#faq-chat-username');
-        _elements['message'] = $('#faq-chat-id--message');
+        _elements['questionform'] = $('#faq-chat-id--questionform');
+        _elements['answerform'] = $('#faq-chat-id--answerform');
+        _elements['questionmessage'] = $('#faq-chat-id--message');
+        _elements['answermessage'] = $('#faq-chat-id--answermessage');
         _elements['discussion'] = $('#faq-chat-list');
         _elements['askbutton'] = $('#faq-chat-askbutton');
+        _elements['answerbutton'] = $('#faq-chat-answerbutton');
+        _elements['questionpanel'] = $("#faq-chat-id--questionpanel");
+        _elements['backbutton'] = $("#faq-chat-backbutton");
+        _elements['qheader'] = $("#faq-chat-q-header");
+        _elements['aheader'] = $("#faq-chat-a-header");
     };
 
-    var _sendMessage = function (e) {
+    var _sendQuestion = function (e) {
         e.preventDefault();
-        _systemObjects.chat.server.askQuestion(_elements.displayname.text(), 'test', _elements.message.val());
-        _elements.message.val('').focus();
+        _systemObjects.chat.server.askQuestion({
+            Text: _elements.questionmessage.val(),
+            User: {
+                Name: _userData.UserName
+            }
+        });
+        _elements.questionmessage.val('').focus();
     };
 
-    var _recieveMessage = function (name, title, question) {
-        _elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", question).replace("{{answercount}}", name).replace("{{questionid", title)));
+    var _sendAnswer = function (e) {
+        e.preventDefault();
+        _systemObjects.chat.server.addAnswer({
+            Text: _elements.answermessage.val(),
+            User: {
+                Name: _userData.UserName
+            },
+            QuestionId: _currentQuestion
+        });        
+        _elements.answermessage.val('').focus();
     };
 
-    var _loadForm = function (html) {
+    var _reDrawQuestions = function () {
+        _elements.discussion.empty();
+        _questions.forEach(function (q) {
+            _elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", q.Text).replace("{{answercount}}", q.Answers.length).replace("{{questionid}}", q.Id)));
+        });     
+    }
+
+    var _recieveQuestion = function (q) {
+        _questions.push(q);
+        _reDrawQuestions();
+    };
+
+
+    var _recieveAnswer = function (a) {
+        _questions.filter(function (v, i) {
+            return v.Id === _currentQuestion;
+        })[0].Answers.push(a);
+        //_elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", q.Text).replace("{{answercount}}", q.Answers.length).replace("{{questionid}}", q.Id)));
+    };
+
+    var toggleAnswers = function (questionId) {
+        if (!!questionId) {
+            console.log(questionId);
+            _elements.questionform.addClass('hide');
+            _currentQuestion = questionId;
+        }
+        else {
+            _elements.answerform.addClass('hide');
+            _currentQuestion = null;
+            _reDrawQuestions();
+        }
+        _elements.discussion.toggleClass('hide');
+        _elements.questionpanel.toggleClass('hide');
+        _elements.qheader.toggleClass('hide');
+        _elements.aheader.toggleClass('hide');
+    }
+
+    var _loadForm = function (html, questions) {
         $(html).appendTo('body');        
         _memorizeElements();
-        _elements.askbutton.click(function () {
-            _elements.form.toggleClass('hide');
+        questions.forEach(function (q) {
+            _recieveQuestion(q);
         });
-        _elements.displayname.text(_userData.UserName);
-        _elements.message.focus();
-        _elements.form.submit(_sendMessage);
+        _questions = questions;
+        _elements.askbutton.click(function () {
+            _elements.questionform.toggleClass('hide');
+        });
+        _elements.answerbutton.click(function () {
+            _elements.answerform.toggleClass('hide');
+        });
+        _elements.discussion.on('click', '.faq-chat-question', function (e) {
+            toggleAnswers($(e.target).attr('data-question-id'));
+        });
+        _elements.backbutton.click(function () {
+            toggleAnswers();
+        });
+        _elements.questionmessage.focus();
+        _elements.questionform.submit(_sendQuestion);
+        _elements.answerform.submit(_sendAnswer);
     };
 
 
@@ -77,9 +150,9 @@
 
         
         _systemObjects.chat = $.connection.baseHub;
-        _systemObjects.chat.client.askQuestion = _recieveMessage;
-        _systemObjects.chat.client.addAnswer = function (questionId, text) { };
-        _systemObjects.chat.client.sendForm = _loadForm;
+        _systemObjects.chat.client.sendQuestion = _recieveQuestion;
+        _systemObjects.chat.client.sendAnswer = _recieveAnswer;
+        _systemObjects.chat.client.sendChat = _loadForm;
 
         
         $.connection.hub.start().done(function () {
