@@ -11,14 +11,14 @@ namespace FAQChat
     {
         public void Configuration(IAppBuilder app)
         {
-            var hubConfiguration = new HubConfiguration();
-            hubConfiguration.EnableDetailedErrors = true;
-            hubConfiguration.EnableJSONP = true;            
-            hubConfiguration.EnableJavaScriptProxies = true;
-
             app.UseCors(CorsOptions.AllowAll);
 
-            app.MapSignalR(hubConfiguration);
+            app.MapSignalR(new HubConfiguration
+            {
+                EnableDetailedErrors = true,
+                EnableJSONP = true,
+                EnableJavaScriptProxies = true
+            });
         }
     }
 }

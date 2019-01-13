@@ -1,12 +1,25 @@
-﻿var FAQChat = function (jQuery) {
-    var $ = jQuery;
+﻿var FAQChat = function (serverURI, userData) {
 
     var _systemObjects = {
-        SERVER_URL: 'http://localhost:58825/',
-        chat: {}
+        SERVER_URL: 'http://localhost:59915/',
+        chat: {},
+        question_template: "<li class='faq-chat-question'><p class= 'faq-chat-question-text'>{{question}}</p><div class='faq-chat-question-answerscount' data-question-id='{{questionid}}'>{{answercount}}</div></li >"
     };
 
     var _elements = {};
+
+    var _userData = {
+        UserId: '0',
+        UserName: 'test',
+        IsWindow:false
+    };
+
+    if (!!!serverURI) {
+        throw "You shoud pass serverURI of chat";
+    }
+    jQuery.extend(_userData, userData);
+    if (serverURI[serverURI.length - 1] !== '/') serverURI = serverURI + '/';
+    _systemObjects.SERVER_URL = serverURI;
 
     var _init = function (initCallback) {
         $.getScript(_systemObjects.SERVER_URL + "Scripts/jquery.signalR-2.2.2.min.js", function () {
@@ -26,9 +39,10 @@
 
     var _memorizeElements = function () {
         _elements['form'] = $('#faq-chat-id--form');
-        _elements['displayname'] = $('#faq-chat-id--displayname');
+        _elements['displayname'] = $('#faq-chat-username');
         _elements['message'] = $('#faq-chat-id--message');
-        _elements['discussion'] = $('#faq-chat-id--discussion');
+        _elements['discussion'] = $('#faq-chat-list');
+        _elements['askbutton'] = $('#faq-chat-askbutton');
     };
 
     var _sendMessage = function (e) {
@@ -38,16 +52,16 @@
     };
 
     var _recieveMessage = function (name, title, question) {
-        var encodedName = $('<div />').text(name).html();
-        var encodedMsg = $('<div />').text(question).html();
-        _elements.discussion.append('<li><strong>' + encodedName + '</strong>:&nbsp;&nbsp;' + encodedMsg + '</li>');
+        _elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", question).replace("{{answercount}}", name).replace("{{questionid", title)));
     };
 
     var _loadForm = function (html) {
         $(html).appendTo('body');        
         _memorizeElements();
-
-        _elements.displayname.text(prompt('Enter your name:', ''));
+        _elements.askbutton.click(function () {
+            _elements.form.toggleClass('hide');
+        });
+        _elements.displayname.text(_userData.UserName);
         _elements.message.focus();
         _elements.form.submit(_sendMessage);
     };
@@ -69,7 +83,9 @@
 
         
         $.connection.hub.start().done(function () {
+            if (userData.IsWindow) _systemObjects.chat.server.loadChatWindow();            
             _systemObjects.chat.server.loadChat();            
+                        
         });
 
 
@@ -77,6 +93,14 @@
 
     return {
         Init: function () {
+            _init(function () {
+                _loadStyles();
+                _startSocket();
+            });
+        },
+
+        InitPage: function () {
+            _userData.IsWindow = true;
             _init(function () {
                 _loadStyles();
                 _startSocket();
@@ -89,6 +113,8 @@
 
 
 $(function () {
-    var chat = new FAQChat($);
+    var chat = new FAQChat('http://localhost:59913',{        
+        UserName: 'midas'
+    });
     chat.Init();
 });

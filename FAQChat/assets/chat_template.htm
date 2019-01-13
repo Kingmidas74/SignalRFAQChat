@@ -1,15 +1,13 @@
-﻿<div class="faq-chat container">
-    <div class="faq-chat faq-chat-header">
-        <div id="faq-chat-id--displayname" />
+﻿<div class="faq-chat-container">
+    <div class="faq-chat-header">
+        <div id="faq-chat-username">Задать вопрос</div>
+        <div id="faq-chat-askbutton">+</div>
     </div>
-    <div class="faq-chat faq-chat-body">
-        <ul id="faq-chat-id--discussion"></ul>
-    </div>
-    <div class="faq-chat faq-chat-bottom">
-        <form id="faq-chat-id--form" autocomplete="off">
-            <input type="hidden" autocomplete="false"  />
-            <input type="text" id="faq-chat-id--message" />
-            <input type="submit" id="faq-chat-id--sendmessage" value="Send" />
-        </form>
-    </div>
+    <form id="faq-chat-id--form" class="hide" autocomplete="off">
+        <input type="hidden" autocomplete="false" />
+        <input type="text" id="faq-chat-id--message" placeholder="" autocomplete="off">
+        <input type="submit" id="faq-chat-id--sendmessage" class="flat icon" value=">>" />
+    </form>
+    <ul id="faq-chat-list">        
+    </ul>
 </div>
