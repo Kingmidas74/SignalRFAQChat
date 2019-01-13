@@ -22,7 +22,7 @@
     _systemObjects.SERVER_URL = serverURI;
 
     var _init = function (initCallback) {
-        $.getScript(_systemObjects.SERVER_URL + "Scripts/jquery.signalR-2.2.2.min.js", function () {
+        $.getScript(_systemObjects.SERVER_URL + "Scripts/jquery.signalR-2.4.0.min.js", function () {
             $.getScript(_systemObjects.SERVER_URL + "signalr/hubs", initCallback);
         });
     };
