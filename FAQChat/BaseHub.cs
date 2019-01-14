@@ -8,11 +8,11 @@ namespace FAQChat
 {
     public class BaseHub : Hub
     {
-
-        public void LoadChat()
+        private List<Question> _qs = new List<Question>();
+        public BaseHub()
         {
             var questions = new List<Question>();
-            for(var i=0;i<10;i++)
+            for (var i = 0; i < 10; i++)
             {
                 var qId = Guid.NewGuid();
                 var q = new Question()
@@ -42,7 +42,12 @@ namespace FAQChat
                 };
                 questions.Add(q);
             }
-            Clients.Caller.sendChat(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\chat_template.htm"), questions);
+            _qs = questions;
+        }
+
+        public void LoadChat()
+        {
+            Clients.Caller.sendChat(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\chat_template.htm"), _qs);
         }
 
         public void AskQuestion(Question question)

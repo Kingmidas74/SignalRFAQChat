@@ -10,6 +10,14 @@
     <!--Reference the jQuery library. -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="FAQChat.js"></script>
+    <script>
+        $(function () {
+            var chat = new FAQChat('http://5.228.65.52:58825/', {
+                UserName: 'midas'
+            });
+            chat.Init();
+        });
+    </script>
     
 </body>
 </html>

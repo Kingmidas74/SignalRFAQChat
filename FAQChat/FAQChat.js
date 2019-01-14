@@ -51,8 +51,10 @@
         _elements['answerbutton'] = $('#faq-chat-answerbutton');
         _elements['questionpanel'] = $("#faq-chat-id--questionpanel");
         _elements['backbutton'] = $("#faq-chat-backbutton");
+        _elements['answers'] = $("#faq-chat-questionpanel-answers");
         _elements['qheader'] = $("#faq-chat-q-header");
         _elements['aheader'] = $("#faq-chat-a-header");
+        _elements['fulllquestion'] = $("#faq-chat-id--question-fulltext");
     };
 
     var _sendQuestion = function (e) {
@@ -82,7 +84,22 @@
         _elements.discussion.empty();
         _questions.forEach(function (q) {
             _elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", q.Text).replace("{{answercount}}", q.Answers.length).replace("{{questionid}}", q.Id)));
-        });     
+        });
+    };
+
+    var _reDrawAnswers = function (questionId) {
+        console.log("REDRAW ANSWERS", questionId);
+        _elements.fulllquestion.text();
+        _elements.answers.empty();
+        if (!!questionId) {
+            var q = _questions.filter(function (v, i) {
+                return v.Id === questionId;
+            })[0];
+            _elements.fulllquestion.text(q.Text);
+            q.Answers.forEach(function (a) {
+                _elements.answers.append($(_systemObjects.answer_template.replace("{{answertext}}", a.Text).replace("{{answerid}}", a.Id).replace("{{scores}}", a.Scores)));
+            });
+        }
     }
 
     var _recieveQuestion = function (q) {
@@ -92,15 +109,22 @@
 
 
     var _recieveAnswer = function (a) {
+        var q = _questions.filter(function (v, i) {
+            return v.Id === a.QuestionId;
+        })[0];
+        console.log(_questions, q, a.QuestionId);
         _questions.filter(function (v, i) {
-            return v.Id === _currentQuestion;
+            return v.Id === a.QuestionId;
         })[0].Answers.push(a);
-        //_elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", q.Text).replace("{{answercount}}", q.Answers.length).replace("{{questionid}}", q.Id)));
+        _reDrawQuestions();
+        if (!!_currentQuestion && _currentQuestion === a.QuestionId) {
+            _reDrawAnswers(a.QuestionId);
+        }
     };
 
     var toggleAnswers = function (questionId) {
         if (!!questionId) {
-            console.log(questionId);
+            _reDrawAnswers(questionId);
             _elements.questionform.addClass('hide');
             _currentQuestion = questionId;
         }
@@ -182,12 +206,3 @@
     };
 
 };
-
-
-
-$(function () {
-    var chat = new FAQChat('http://localhost:59913',{        
-        UserName: 'midas'
-    });
-    chat.Init();
-});
