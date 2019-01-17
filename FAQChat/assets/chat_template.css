@@ -5,188 +5,197 @@
     max-height: 400px;
     background: #cccccc;
     border-radius: 10px 10px 0px 0px;
-    width: 300px;
+    width: 300px;  
+    display:flex;
+    flex-flow:column nowrap;
+    align-items:stretch;
+    justify-content:stretch;  
+}
+
+.faq-chat-screen {
+    border-radius: 10px 10px 0px 0px;    
     display: flex;
     flex-flow: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
 }
 
-    .faq-chat-container .faq-chat-button {
-        background-color: #fc814a;
-        outline: 0;
-        border-radius: 5px;
-        padding: 0.5rem;
-        user-select: none;
-        text-align: center;
-    }
+.faq-chat-container .faq-chat-screen .faq-chat-button {
+    background-color: #fc814a;
+    outline: 0;
+    border-radius: 5px;
+    padding: 0.5rem;
+    user-select: none;
+    text-align: center;
+}
 
-        .faq-chat-container .faq-chat-button.flat {
-            background-color: transparent;
-            border: none;
-        }
+.faq-chat-container .faq-chat-screen .faq-chat-button.flat {
+    background-color: transparent;
+    border: none;
+}
 
-        .faq-chat-container .faq-chat-button.icon {
-            border-radius: 50%;
-            background-color: transparent;
-            border: none;
-            min-width: 36px;
-            max-width: 36px;
-        }
+.faq-chat-container .faq-chat-screen .faq-chat-button.icon {
+    border-radius: 50%;
+    background-color: transparent;
+    border: none;
+    min-width: 36px;
+    max-width: 36px;
+}
 
-            .faq-chat-container .faq-chat-button.icon.small {
-                min-width: 9px;
-                max-width: 9px;
-                font-size: 0.8rem;
-            }
+.faq-chat-container .faq-chat-screen .faq-chat-button.icon.small {
+    min-width: 9px;
+    max-width: 9px;
+    font-size: 0.8rem;
+}
 
-        .faq-chat-container .faq-chat-button:hover {
-            cursor: pointer;
-            background-color: #a15380;
-        }
+.faq-chat-container .faq-chat-screen .faq-chat-button:hover {
+    cursor: pointer;
+    background-color: #a15380;
+}
 
-            .faq-chat-container .faq-chat-button:hover:active {
-                background-color: #a15330;
-                color: #cccccc;
-            }
+.faq-chat-container .faq-chat-screen .faq-chat-button:hover:active {
+    background-color: #a15330;
+    color: #cccccc;
+}
 
-    .faq-chat-container .faq-chat-header {
-        background: #423c3c;
-        border-radius: 10px 10px 0 0;
-        padding: 0 1.2rem;
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        font-size: 1rem;
-        color: #fff;
-    }
+.faq-chat-container .faq-chat-screen .faq-chat-header {
+    background: #423c3c;
+    border-radius: 10px 10px 0 0;
+    padding: 0 1.2rem;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #fff;
+}
 
-        .faq-chat-container .faq-chat-header .faq-chat-header--title {
-            margin: 0.8rem 0;
-        }
+.faq-chat-container .faq-chat-screen .faq-chat-header .faq-chat-header--title {
+    margin: 0.8rem 0;
+}
 
-    .faq-chat-container #faq-chat-list {
-        flex: 1 1 auto;
-        overflow-y: auto;
-        background: red;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: stretch;
-        list-style-type: none;
-    }
+.faq-chat-container .faq-chat-screen .faq-chat-form {
+    background: green;
+    display: flex;
+    flex: 0 0 auto;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    justify-content: stretch;
+    min-height: 50px;
+    padding: 0.5rem;
+}
 
-        .faq-chat-container #faq-chat-list .faq-chat-question {
-            background: purple;
-            padding: 0rem 1.2rem;
-            display: flex;
-            flex: 0 0 auto;
-            align-items: center;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            font-size: 1rem;
-            color: #fff;
-        }
+.faq-chat-container .hide {
+    display: none !important;
+}
 
-            .faq-chat-container #faq-chat-list .faq-chat-question:hover {
-                background: darkorange;
-                cursor: pointer;
-            }
+.faq-chat-container .faq-chat-screen .faq-chat-textinput {
+    padding: 8px;
+    flex: 1 1 auto;
+    border: none;
+    border-bottom: 1px solid black;
+    background: transparent;
+    color: purple;
+}
 
-            .faq-chat-container #faq-chat-list .faq-chat-question .faq-chat-question-answerscount {
-                margin-left: 2rem;
-            }
+.faq-chat-container .faq-chat-screen .faq-chat-textinput:focus {
+    outline: none;
+    border: none;
+}
 
-    .faq-chat-container .faq-chat-form {
-        background: green;
-        display: flex;
-        flex: 0 0 auto;
-        flex-flow: row nowrap;
-        align-items: stretch;
-        justify-content: stretch;
-        min-height: 50px;
-        padding: 0.5rem;
-    }
 
-    .faq-chat-container .hide {
-        display: none !important;
-    }
+#faq-chat-id--questionList {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    background: red;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    list-style-type: none;
+}
 
-    .faq-chat-container .faq-chat-textinput {
-        padding: 8px;
-        flex: 1 1 auto;
-        border: none;
-        border-bottom: 1px solid black;
-        background: transparent;
-        color: purple;
-    }
+#faq-chat-id--questionList .faq-chat-question {
+    background: purple;
+    padding: 0rem 1.2rem;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #fff;
+}
 
-        .faq-chat-container .faq-chat-textinput:focus {
-            outline: none;
-            border: none;
-        }
+#faq-chat-id--questionList .faq-chat-question:hover {
+    background: darkorange;
+    cursor: pointer;
+}
 
-    .faq-chat-container #faq-chat-id--questionpanel {
-        flex: 1 1 auto;
-        background: red;
-        overflow-y: auto;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-flow: column nowrap;
-        align-items: stretch;
-    }
+#faq-chat-id--questionList .faq-chat-question .faq-chat-question-answerscount {
+    margin-left: 2rem;
+}
 
-        .faq-chat-container #faq-chat-id--questionpanel > p {
-            color: white;
-            font-size: 1rem;
-            padding-left: 1.2rem;
-        }
 
-        .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
+#faq-chat-id--expandedQuestionPanel {
+    flex: 1 1 auto;
+    background: red;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+}
 
-            .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer {
-                background-color: Maroon;
-                padding: 0rem 1.2rem;
-                display: flex;
-                flex: 0 0 auto;
-                align-items: center;
-                flex-flow: row nowrap;
-                justify-content: space-between;
-                font-size: 1rem;
-                color: #fff;
-            }
+#faq-chat-id--expandedQuestionPanel > p {
+    color: white;
+    font-size: 1rem;
+    padding-left: 1.2rem;
+}
 
-                .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer:hover {
-                    background-color: Silver;
-                }
+#faq-chat-id--expandedQuestionPanel > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 
-                .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-text {
-                    flex: 9 9 auto;
-                }
+#faq-chat-id--expandedQuestionPanel>ul .faq-chat-questionpanel-answer {
+    background-color: Maroon;
+    padding: 0rem 1.2rem;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #fff;
+}
 
-                .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores {
-                    display: flex;
-                    flex-flow: row nowrap;
-                    justify-content: space-between;
-                    flex: 0 0 auto;
-                    user-select: none;
-                    margin-left: 0.5rem;
-                    align-items: center;
-                }
+#faq-chat-id--expandedQuestionPanel > ul .faq-chat-questionpanel-answer:hover {
+    background-color: Silver;
+}
 
-                    .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores span {
-                        padding: 0 0.5rem;
-                    }
+#faq-chat-id--expandedQuestionPanel > ul .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-text {
+    flex: 9 9 auto;
+}
 
-                    .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores #faq-chat-questionpanel-answer-scoresincrease,
-                    .faq-chat-container #faq-chat-id--questionpanel #faq-chat-questionpanel-answers .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores #faq-chat-questionpanel-answer-scoresdecrease {
-                        cursor: pointer;
-                    }
+#faq-chat-id--expandedQuestionPanel > ul .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    flex: 0 0 auto;
+    user-select: none;
+    margin-left: 0.5rem;
+    align-items: center;
+}
+
+#faq-chat-id--expandedQuestionPanel > ul .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores span {
+    padding: 0 0.5rem;
+}
+
+#faq-chat-id--expandedQuestionPanel > ul .faq-chat-questionpanel-answer .faq-chat-questionpanel-answer-scores .faq-chat-questionpanel-answer-scores-control {
+    cursor: pointer;
+}

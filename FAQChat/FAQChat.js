@@ -6,28 +6,56 @@
     var _systemObjects = {
         SERVER_URL: 'http://localhost:59915/',
         chat: {},
-        question_template: "<li class='faq-chat-question' data-question-id='{{questionid}}'><p class= 'faq-chat-question-text'>{{question}}</p><div class='faq-chat-question-answerscount'>{{answercount}}</div></li >",
-        answer_template: "<li class='faq-chat-questionpanel-answer'><p class= 'faq-chat-questionpanel-answer-text' >{{answertext}}</p><div class='faq-chat-questionpanel-answer-scores' data-answer-id='{{answerid}}'><div class='faq-chat-questionpanel-answer-scoresincrease' class='faq-chat-button icon small'>↑</div><span>{{scores}}</span><div class='faq-chat-questionpanel-answer-scoresdecrease' class='faq-chat-button icon small'>↓</div></div></li >"
+        ids: {
+            questionList: "#faq-chat-id--questionList",
+            questionListTemplate: "#faq-chat-id--questionListTemplate",
+            expandedQuestion: "#faq-chat-id--expandedQuestionPanel",
+            expandedQuestionTemplate: "#faq-chat-id--expandedQuestionPanelTemplate"
+        }
     };
-
-    var _elements = {};
 
     var _userData = {
         UserId: '0',
         UserName: 'test',
-        IsWindow:false
+        IsWindow: false
     };
 
-    if (!!!serverURI) {
-        throw "You shoud pass serverURI of chat";
+    var _elements = {};
+
+    
+    constructor = function (serverURI, userData) {
+        if (!!!serverURI) throw "You shoud pass serverURI of chat";
+        if (serverURI[serverURI.length - 1] !== '/') serverURI = serverURI + '/';
+        _systemObjects.SERVER_URL = serverURI;
+
+        jQuery.extend(_userData, userData);
+    }(serverURI, userData);
+    
+
+    var getQuestionById = function (qId) {
+        var id = _currentQuestion;
+        if (!!qId) id = qId;
+        var q = _questions.filter(function (v, i) {
+            return v.Id === id;
+        })[0];
+        if (!!q === false) throw "Question wasn't selected!";
+        return q;
     }
-    jQuery.extend(_userData, userData);
-    if (serverURI[serverURI.length - 1] !== '/') serverURI = serverURI + '/';
-    _systemObjects.SERVER_URL = serverURI;
+
+    var getAnswerById = function (answerId) {
+        var a = getQuestionById().Answers.filter(function (a, i) {
+            return a.Id === answerId
+        })[0];
+        if (!!a === false) throw "Answer not exists!";
+        return a;
+    }
+
 
     var _init = function (initCallback) {
         $.getScript("https://cdn.jsdelivr.net/npm/signalr@2.4.0/jquery.signalR.min.js", function () {
-            $.getScript(_systemObjects.SERVER_URL + "signalr/hubs", initCallback);
+            $.getScript("https://www.jsviews.com/download/jsviews.min.js", function () {
+                $.getScript(_systemObjects.SERVER_URL + "signalr/hubs", initCallback);
+            });
         });
     };
 
@@ -42,25 +70,26 @@
     };
 
     var _memorizeElements = function () {
+        _elements['questionscreen'] = $('#faq-chat-id--questionsscreen');
+        _elements['answersscreen'] = $('#faq-chat-id--answersscreen');
+
         _elements['questionform'] = $('#faq-chat-id--questionform');
         _elements['answerform'] = $('#faq-chat-id--answerform');
-        _elements['questionmessage'] = $('#faq-chat-id--message');
+
+        _elements['questionmessage'] = $('#faq-chat-id--questionmessage');
         _elements['answermessage'] = $('#faq-chat-id--answermessage');
-        _elements['discussion'] = $('#faq-chat-list');
+
         _elements['askbutton'] = $('#faq-chat-askbutton');
         _elements['answerbutton'] = $('#faq-chat-answerbutton');
-        _elements['questionpanel'] = $("#faq-chat-id--questionpanel");
         _elements['backbutton'] = $("#faq-chat-backbutton");
-        _elements['answers'] = $("#faq-chat-questionpanel-answers");
-        _elements['qheader'] = $("#faq-chat-q-header");
-        _elements['aheader'] = $("#faq-chat-a-header");
-        _elements['fulllquestion'] = $("#faq-chat-id--question-fulltext");
     };
 
     var _sendQuestion = function (e) {
         e.preventDefault();
+        var text = _elements.questionmessage.val();
+        if (!!text===false && text === '') return;
         _systemObjects.chat.server.askQuestion({
-            Text: _elements.questionmessage.val(),
+            Text: text,
             User: {
                 Name: _userData.UserName
             }
@@ -70,8 +99,10 @@
 
     var _sendAnswer = function (e) {
         e.preventDefault();
+        var answer = _elements.answermessage.val();
+        if(!!answer===false || answer.length<='0' || answer==='') return;
         _systemObjects.chat.server.addAnswer({
-            Text: _elements.answermessage.val(),
+            Text: answer,
             User: {
                 Name: _userData.UserName
             },
@@ -80,26 +111,23 @@
         _elements.answermessage.val('').focus();
     };
 
-    var _reDrawQuestions = function () {
-        _elements.discussion.empty();
-        _questions.forEach(function (q) {
-            _elements.discussion.append($(_systemObjects.question_template.replace("{{question}}", q.Text).replace("{{answercount}}", q.Answers.length).replace("{{questionid}}", q.Id)));
-        });
+    var _reDrawQuestions = function () {        
+        $.templates(_systemObjects.ids.questionListTemplate).link(_systemObjects.ids.questionList, { questions: _questions }, { selectQuestion: toggleAnswers });
     };
 
-    var _reDrawAnswers = function (questionId) {
-        console.log("REDRAW ANSWERS", questionId);
-        _elements.fulllquestion.text();
-        _elements.answers.empty();
-        if (!!questionId) {
-            var q = _questions.filter(function (v, i) {
-                return v.Id === questionId;
-            })[0];
-            _elements.fulllquestion.text(q.Text);
-            q.Answers.forEach(function (a) {
-                _elements.answers.append($(_systemObjects.answer_template.replace("{{answertext}}", a.Text).replace("{{answerid}}", a.Id).replace("{{scores}}", a.Scores)));
-            });
-        }
+    var _reDrawAnswers = function (questionId) {        
+        if (!!_currentQuestion === false || _currentQuestion !== questionId) return;
+        $.templates(_systemObjects.ids.expandedQuestionTemplate).link(_systemObjects.ids.expandedQuestion, getQuestionById((!!questionId) ? questionId : _currentQuestion), { increaseScore: increaseScore, decreaseScore: decreaseScore });
+    }
+
+    var increaseScore = function (answerId) {        
+        getAnswerById(answerId).Scores++;
+        _reDrawAnswers(_currentQuestion);
+    }
+
+    var decreaseScore = function (answerId) {        
+        getAnswerById(answerId).Scores--;
+        _reDrawAnswers(_currentQuestion);
     }
 
     var _recieveQuestion = function (q) {
@@ -107,64 +135,47 @@
         _reDrawQuestions();
     };
 
-
-    var _recieveAnswer = function (a) {
-        var q = _questions.filter(function (v, i) {
-            return v.Id === a.QuestionId;
-        })[0];
-        console.log(_questions, q, a.QuestionId);
-        _questions.filter(function (v, i) {
-            return v.Id === a.QuestionId;
-        })[0].Answers.push(a);
+    var _recieveAnswer = function (a) {        
+        getQuestionById(a.QuestionId).Answers.push(a);
         _reDrawQuestions();
-        if (!!_currentQuestion && _currentQuestion === a.QuestionId) {
-            _reDrawAnswers(a.QuestionId);
-        }
+        _reDrawAnswers(a.QuestionId);        
     };
 
     var toggleAnswers = function (questionId) {
         if (!!questionId) {
-            _reDrawAnswers(questionId);
-            _elements.questionform.addClass('hide');
+            _elements.questionscreen.addClass('hide');
             _currentQuestion = questionId;
+            _reDrawAnswers(questionId);
+            _elements.answersscreen.removeClass('hide');
         }
         else {
-            _elements.answerform.addClass('hide');
+            _elements.answersscreen.addClass('hide');            
             _currentQuestion = null;
             _reDrawQuestions();
+            _elements.questionscreen.removeClass('hide');
         }
-        _elements.discussion.toggleClass('hide');
-        _elements.questionpanel.toggleClass('hide');
-        _elements.qheader.toggleClass('hide');
-        _elements.aheader.toggleClass('hide');
     }
 
-    var _loadForm = function (html, questions) {
+    var _recieveForm = function (html, questions) {
         $(html).appendTo('body');        
         _memorizeElements();
-        questions.forEach(function (q) {
-            _recieveQuestion(q);
-        });
+
         _questions = questions;
+        _reDrawQuestions();
+
         _elements.askbutton.click(function () {
             _elements.questionform.toggleClass('hide');
         });
         _elements.answerbutton.click(function () {
             _elements.answerform.toggleClass('hide');
         });
-        _elements.discussion.on('click', '.faq-chat-question', function (e) {
-            toggleAnswers($(e.target).attr('data-question-id'));
-        });
         _elements.backbutton.click(function () {
             toggleAnswers();
         });
-        _elements.questionmessage.focus();
+
         _elements.questionform.submit(_sendQuestion);
         _elements.answerform.submit(_sendAnswer);
     };
-
-
-
 
     var _startSocket = function () {
         $.connection.hub.url = _systemObjects.SERVER_URL + '/signalr';
@@ -172,20 +183,14 @@
 
         });
 
-        
         _systemObjects.chat = $.connection.baseHub;
         _systemObjects.chat.client.sendQuestion = _recieveQuestion;
         _systemObjects.chat.client.sendAnswer = _recieveAnswer;
-        _systemObjects.chat.client.sendChat = _loadForm;
+        _systemObjects.chat.client.sendChat = _recieveForm;
 
-        
         $.connection.hub.start().done(function () {
-            if (userData.IsWindow) _systemObjects.chat.server.loadChatWindow();            
-            _systemObjects.chat.server.loadChat();            
-                        
+            _systemObjects.chat.server.loadChat(); 
         });
-
-
     };
 
     return {
@@ -194,15 +199,6 @@
                 _loadStyles();
                 _startSocket();
             });
-        },
-
-        InitPage: function () {
-            _userData.IsWindow = true;
-            _init(function () {
-                _loadStyles();
-                _startSocket();
-            });
         }
     };
-
 };

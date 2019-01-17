@@ -1,28 +1,64 @@
 ﻿<div class="faq-chat-container">
-    <div class="faq-chat-header" id="faq-chat-q-header">
-        <div id="faq-chat-username" class="faq-chat-header--title">Задать вопрос</div>
-        <div id="faq-chat-askbutton" class="faq-chat-button">+</div>
-    </div>
-    <div class="faq-chat-header hide"  id="faq-chat-a-header">
-        <div id="faq-chat-backbutton" class="faq-chat-button">←</div>
-        <div class="faq-chat-header--title">Предложить ответ</div>
-        <div id="faq-chat-answerbutton" class="faq-chat-button">+</div>
-    </div>
-    <form id="faq-chat-id--questionform" class="faq-chat-form hide" autocomplete="off">
-        <input type="hidden" autocomplete="false" />
-        <input type="text" id="faq-chat-id--message" class="faq-chat-textinput" placeholder="" autocomplete="off">
-        <input type="submit" class="faq-chat-button flat" value=">>" />
-    </form>
-    <form id="faq-chat-id--answerform" class="faq-chat-form hide" autocomplete="off">
-        <input type="hidden" autocomplete="false" />
-        <input type="text" class="faq-chat-textinput" id="faq-chat-id--answermessage" placeholder="" autocomplete="off">
-        <input type="submit" class="faq-chat-button flat" value=">>" />
-    </form>
-    <div id="faq-chat-id--questionpanel" class="hide">
-        <p id="faq-chat-id--question-fulltext">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
-        <ul id="faq-chat-questionpanel-answers">            
+    <div id="faq-chat-id--questionsscreen" class="faq-chat-screen">
+        <div class="faq-chat-header" id="faq-chat-q-header">
+            <div class="faq-chat-header--title">Задать вопрос</div>
+            <div id="faq-chat-askbutton" class="faq-chat-button">+</div>
+        </div>
+        <form id="faq-chat-id--questionform" class="faq-chat-form" autocomplete="off">
+            <input type="hidden" autocomplete="false" />
+            <input type="text" id="faq-chat-id--questionmessage" class="faq-chat-textinput" placeholder="" autocomplete="off">
+            <input type="submit" class="faq-chat-button flat" value=">>" />
+        </form>
+        <ul id="faq-chat-id--questionList">
+        
         </ul>
     </div>
-    <ul id="faq-chat-list">
-    </ul>
+    <div id="faq-chat-id--answersscreen" class="faq-chat-screen hide">        
+        <div class="faq-chat-header" id="faq-chat-a-header">
+            <div id="faq-chat-backbutton" class="faq-chat-button">←</div>
+            <div class="faq-chat-header--title">Предложить ответ</div>
+            <div id="faq-chat-answerbutton" class="faq-chat-button">+</div>
+        </div>
+        <form id="faq-chat-id--answerform" class="faq-chat-form" autocomplete="off">
+            <input type="hidden" autocomplete="false" />
+            <input type="text" id="faq-chat-id--answermessage" class="faq-chat-textinput" placeholder="" autocomplete="off">
+            <input type="submit" class="faq-chat-button flat" value=">>" />
+        </form>
+        <div id="faq-chat-id--expandedQuestionPanel">
+
+        </div>
+    </div>
 </div>
+
+<script  type="text/x-jsrender" id="faq-chat-id--questionListTemplate">
+    {^{for questions}}
+    <li class='faq-chat-question' data-question-id='{{:Id}}' data-link="{on ~selectQuestion Id}">
+        <p class='faq-chat-question-text'>
+            {{:Text}}
+        </p>
+        <div class='faq-chat-question-answerscount'>
+            {{:Answers.length}}
+        </div>
+    </li>
+    {{/for}}    
+</script>
+
+<script type="text/x-jsrender" id="faq-chat-id--expandedQuestionPanelTemplate">
+    <p>
+        {{:Text}}
+    </p>
+    <ul>
+        {^{for Answers}}
+        <li class='faq-chat-questionpanel-answer'>
+            <p class='faq-chat-questionpanel-answer-text'>
+                {{:Text}}
+            </p>
+            <div class='faq-chat-questionpanel-answer-scores'>
+                <div class='faq-chat-questionpanel-answer-scores-control faq-chat-button icon small' data-link="{on ~increaseScore Id}">↑</div>
+                <span>{{:Scores}}</span>
+                <div class='faq-chat-questionpanel-answer-scores-control faq-chat-button icon small' data-link="{on ~decreaseScore Id}">↓</div>
+            </div>
+        </li>
+        {{/for}}        
+    </ul>
+</script>
